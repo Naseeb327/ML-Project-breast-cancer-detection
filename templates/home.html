@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breast Cancer Detection - Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-group {
+            margin-bottom: 2rem;
+        }
+
+        .feature-group h3 {
+            color: #34495e;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            color: #2c3e50;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            padding: 0.8rem;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .sample-data {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .sample-data h4 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .sample-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sample-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .sample-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(5px);
+        }
+
+        .analysis-btn {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 184, 148, 0.3);
+        }
+
+        .analysis-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 184, 148, 0.4);
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-card h4 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .info-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+
+        .clear-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .results-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #ecf0f1;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #00b894, #00cec9);
+        }
+
+        .result-card.malignant::before {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+        }
+
+        .result-card h3 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .prediction-score {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .label {
+            color: #7f8c8d;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .diagnosis {
+            margin-bottom: 1.5rem;
+        }
+
+        .diagnosis-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .diagnosis-text.malignant {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .diagnosis-text.benign {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+        }
+
+        .diagnosis-desc {
+            color: #2c3e50;
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 12px;
+            background: #ecf0f1;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            transition: width 0.8s ease;
+            border-radius: 6px;
+        }
+
+        .confidence-fill.high-risk {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+        }
+
+        .confidence-fill.low-risk {
+            background: linear-gradient(90deg, #00b894, #00cec9);
+        }
+
+        .confidence-text {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+                order: -1;
+            }
+            
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-section, .sidebar {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎗️ Breast Cancer Detection Analysis</h1>
+            <p>Enter clinical data for ML-based breast cancer detection</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2 class="section-title">📊 Clinical Features Input</h2>
+                
+                <form id="detectionForm" action="/predictdata" method="POST">
+                    <div class="feature-group">
+                        <h3>🔬 Mean Values</h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="radius_mean">Radius Mean</label>
+                                <input type="number" id="radius_mean" name="radius_mean" step="any" placeholder="e.g., 17.99">
+                            </div>
+                            <div class="input-group">
+                                <label for="texture_mean">Texture Mean</label>
+                                <input type="number" id="texture_mean" name="texture_mean" step="any" placeholder="e.g., 10.38">
+                            </div>
+                            <div class="input-group">
+                                <label for="perimeter_mean">Perimeter Mean</label>
+                                <input type="number" id="perimeter_mean" name="perimeter_mean" step="any" placeholder="e.g., 122.8">
+                            </div>
+                            <div class="input-group">
+                                <label for="area_mean">Area Mean</label>
+                                <input type="number" id="area_mean" name="area_mean" step="any" placeholder="e.g., 1001.0">
+                            </div>
+                            <div class="input-group">
+                                <label for="smoothness_mean">Smoothness Mean</label>
+                                <input type="number" id="smoothness_mean" name="smoothness_mean" step="any" placeholder="e.g., 0.1184">
+                            </div>
+                            <div class="input-group">
+                                <label for="compactness_mean">Compactness Mean</label>
+                                <input type="number" id="compactness_mean" name="compactness_mean" step="any" placeholder="e.g., 0.2776">
+                            </div>
+                            <div class="input-group">
+                                <label for="concavity_mean">Concavity Mean</label>
+                                <input type="number" id="concavity_mean" name="concavity_mean" step="any" placeholder="e.g., 0.3001">
+                            </div>
+                            <div class="input-group">
+                                <label for="concave_points_mean">Concave Points Mean</label>
+                                <input type="number" id="concave_points_mean" name="concave_points_mean" step="any" placeholder="e.g., 0.1471">
+                            </div>
+                            <div class="input-group">
+                                <label for="symmetry_mean">Symmetry Mean</label>
+                                <input type="number" id="symmetry_mean" name="symmetry_mean" step="any" placeholder="e.g., 0.2419">
+                            </div>
+                            <div class="input-group">
+                                <label for="fractal_dimension_mean">Fractal Dimension Mean</label>
+                                <input type="number" id="fractal_dimension_mean" name="fractal_dimension_mean" step="any" placeholder="e.g., 0.07871">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-group">
+                        <h3>📈 Standard Error Values</h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="radius_se">Radius SE</label>
+                                <input type="number" id="radius_se" name="radius_se" step="any" placeholder="e.g., 1.095">
+                            </div>
+                            <div class="input-group">
+                                <label for="texture_se">Texture SE</label>
+                                <input type="number" id="texture_se" name="texture_se" step="any" placeholder="e.g., 0.9053">
+                            </div>
+                            <div class="input-group">
+                                <label for="perimeter_se">Perimeter SE</label>
+                                <input type="number" id="perimeter_se" name="perimeter_se" step="any" placeholder="e.g., 8.589">
+                            </div>
+                            <div class="input-group">
+                                <label for="area_se">Area SE</label>
+                                <input type="number" id="area_se" name="area_se" step="any" placeholder="e.g., 153.4">
+                            </div>
+                            <div class="input-group">
+                                <label for="smoothness_se">Smoothness SE</label>
+                                <input type="number" id="smoothness_se" name="smoothness_se" step="any" placeholder="e.g., 0.006399">
+                            </div>
+                            <div class="input-group">
+                                <label for="compactness_se">Compactness SE</label>
+                                <input type="number" id="compactness_se" name="compactness_se" step="any" placeholder="e.g., 0.04904">
+                            </div>
+                            <div class="input-group">
+                                <label for="concavity_se">Concavity SE</label>
+                                <input type="number" id="concavity_se" name="concavity_se" step="any" placeholder="e.g., 0.05373">
+                            </div>
+                            <div class="input-group">
+                                <label for="concave_points_se">Concave Points SE</label>
+                                <input type="number" id="concave_points_se" name="concave_points_se" step="any" placeholder="e.g., 0.01587">
+                            </div>
+                            <div class="input-group">
+                                <label for="symmetry_se">Symmetry SE</label>
+                                <input type="number" id="symmetry_se" name="symmetry_se" step="any" placeholder="e.g., 0.03003">
+                            </div>
+                            <div class="input-group">
+                                <label for="fractal_dimension_se">Fractal Dimension SE</label>
+                                <input type="number" id="fractal_dimension_se" name="fractal_dimension_se" step="any" placeholder="e.g., 0.006193">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-group">
+                        <h3>🔺 Worst Values</h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="radius_worst">Radius Worst</label>
+                                <input type="number" id="radius_worst" name="radius_worst" step="any" placeholder="e.g., 25.38">
+                            </div>
+                            <div class="input-group">
+                                <label for="texture_worst">Texture Worst</label>
+                                <input type="number" id="texture_worst" name="texture_worst" step="any" placeholder="e.g., 17.33">
+                            </div>
+                            <div class="input-group">
+                                <label for="perimeter_worst">Perimeter Worst</label>
+                                <input type="number" id="perimeter_worst" name="perimeter_worst" step="any" placeholder="e.g., 184.6">
+                            </div>
+                            <div class="input-group">
+                                <label for="area_worst">Area Worst</label>
+                                <input type="number" id="area_worst" name="area_worst" step="any" placeholder="e.g., 2019.0">
+                            </div>
+                            <div class="input-group">
+                                <label for="smoothness_worst">Smoothness Worst</label>
+                                <input type="number" id="smoothness_worst" name="smoothness_worst" step="any" placeholder="e.g., 0.1622">
+                            </div>
+                            <div class="input-group">
+                                <label for="compactness_worst">Compactness Worst</label>
+                                <input type="number" id="compactness_worst" name="compactness_worst" step="any" placeholder="e.g., 0.6656">
+                            </div>
+                            <div class="input-group">
+                                <label for="concavity_worst">Concavity Worst</label>
+                                <input type="number" id="concavity_worst" name="concavity_worst" step="any" placeholder="e.g., 0.7119">
+                            </div>
+                            <div class="input-group">
+                                <label for="concave_points_worst">Concave Points Worst</label>
+                                <input type="number" id="concave_points_worst" name="concave_points_worst" step="any" placeholder="e.g., 0.2654">
+                            </div>
+                            <div class="input-group">
+                                <label for="symmetry_worst">Symmetry Worst</label>
+                                <input type="number" id="symmetry_worst" name="symmetry_worst" step="any" placeholder="e.g., 0.4601">
+                            </div>
+                            <div class="input-group">
+                                <label for="fractal_dimension_worst">Fractal Dimension Worst</label>
+                                <input type="number" id="fractal_dimension_worst" name="fractal_dimension_worst" step="any" placeholder="e.g., 0.1189">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="button" class="clear-btn" onclick="clearForm()">Clear All</button>
+                        <button type="submit" class="analysis-btn">🔍 Analyze for Cancer Detection</button>
+                    </div>
+                </form>
+
+                <!-- Results Section -->
+                {% if results is defined %}
+                <div class="results-section">
+                    <div class="result-card {% if results > 0.5 %}malignant{% else %}benign{% endif %}">
+                        <h3>🎯 Detection Results</h3>
+                        <div class="prediction-score">
+                            <span class="score">{{ results }}</span>
+                            <span class="label">Prediction Score</span>
+                        </div>
+                        <div class="diagnosis">
+                            {% if results > 0.5 %}
+                                <span class="diagnosis-text malignant">⚠️ Malignant (M)</span>
+                                <p class="diagnosis-desc">High probability of malignancy detected. Please consult with a medical professional immediately.</p>
+                            {% else %}
+                                <span class="diagnosis-text benign">✅ Benign (B)</span>
+                                <p class="diagnosis-desc">Low probability of malignancy. Regular monitoring recommended.</p>
+                            {% endif %}
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill {% if results > 0.5 %}high-risk{% else %}low-risk{% endif %}" 
+                                 style="width: {{ (results * 100) if results > 0.5 else ((1 - results) * 100) }}%"></div>
+                        </div>
+                        <p class="confidence-text">
+                            Confidence: {{ "%.1f" | format((results * 100) if results > 0.5 else ((1 - results) * 100)) }}%
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="sidebar">
+                <div class="sample-data">
+                    <h4>📋 Sample Data</h4>
+                    <p style="margin-bottom: 1rem; font-size: 0.9rem;">Click to load sample cases:</p>
+                    <div class="sample-buttons">
+                        <button class="sample-btn" onclick="loadSample(1)">
+                            Case 1: Malignant (M) - High Risk
+                        </button>
+                        <button class="sample-btn" onclick="loadSample(2)">
+                            Case 2: Malignant (M) - Medium Risk
+                        </button>
+                        <button class="sample-btn" onclick="loadSample(3)">
+                            Case 3: Benign (B) - Low Risk
+                        </button>
+                        <button class="sample-btn" onclick="loadSample(4)">
+                            Case 4: Benign (B) - Very Low Risk
+                        </button>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h4>🎯 Diagnosis Key</h4>
+                    <p><strong>M (1)</strong> = Malignant<br><strong>B (0)</strong> = Benign</p>
+                </div>
+
+                <div class="info-card">
+                    <h4>📊 Feature Categories</h4>
+                    <p><strong>Mean:</strong> Average measurements<br><strong>SE:</strong> Standard error values<br><strong>Worst:</strong> Largest/most severe values</p>
+                </div>
+
+                <div class="info-card">
+                    <h4>⚡ Quick Tips</h4>
+                    <p>• All 30 features are required<br>• Use decimal values for precision<br>• Sample data helps understand ranges</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data from the provided dataset
+        const sampleData = {
+            1: { // Malignant case 1
+                radius_mean: 17.99, texture_mean: 10.38, perimeter_mean: 122.8, area_mean: 1001.0,
+                smoothness_mean: 0.1184, compactness_mean: 0.2776, concavity_mean: 0.3001,
+                concave_points_mean: 0.1471, symmetry_mean: 0.2419, fractal_dimension_mean: 0.07871,
+                radius_se: 1.095, texture_se: 0.9053, perimeter_se: 8.589, area_se: 153.4,
+                smoothness_se: 0.006399, compactness_se: 0.04904, concavity_se: 0.05373,
+                concave_points_se: 0.01587, symmetry_se: 0.03003, fractal_dimension_se: 0.006193,
+                radius_worst: 25.38, texture_worst: 17.33, perimeter_worst: 184.6, area_worst: 2019.0,
+                smoothness_worst: 0.1622, compactness_worst: 0.6656, concavity_worst: 0.7119,
+                concave_points_worst: 0.2654, symmetry_worst: 0.4601, fractal_dimension_worst: 0.1189
+            },
+            2: { // Malignant case 2
+                radius_mean: 20.57, texture_mean: 17.77, perimeter_mean: 132.9, area_mean: 1326.0,
+                smoothness_mean: 0.08474, compactness_mean: 0.07864, concavity_mean: 0.0869,
+                concave_points_mean: 0.07017, symmetry_mean: 0.1812, fractal_dimension_mean: 0.05667,
+                radius_se: 0.5435, texture_se: 0.7339, perimeter_se: 3.398, area_se: 74.08,
+                smoothness_se: 0.005225, compactness_se: 0.01308, concavity_se: 0.0186,
+                concave_points_se: 0.0134, symmetry_se: 0.01389, fractal_dimension_se: 0.003532,
+                radius_worst: 24.99, texture_worst: 23.41, perimeter_worst: 158.8, area_worst: 1956.0,
+                smoothness_worst: 0.1238, compactness_worst: 0.1866, concavity_worst: 0.2416,
+                concave_points_worst: 0.186, symmetry_worst: 0.275, fractal_dimension_worst: 0.08902
+            },
+            3: { // Benign case 1
+                radius_mean: 13.54, texture_mean: 14.36, perimeter_mean: 87.46, area_mean: 566.3,
+                smoothness_mean: 0.09779, compactness_mean: 0.08129, concavity_mean: 0.06664,
+                concave_points_mean: 0.04781, symmetry_mean: 0.1885, fractal_dimension_mean: 0.05766,
+                radius_se: 0.2699, texture_se: 0.7886, perimeter_se: 2.058, area_se: 23.56,
+                smoothness_se: 0.008462, compactness_se: 0.0146, concavity_se: 0.02387,
+                concave_points_se: 0.01315, symmetry_se: 0.0198, fractal_dimension_se: 0.0023,
+                radius_worst: 15.11, texture_worst: 19.26, perimeter_worst: 99.7, area_worst: 711.2,
+                smoothness_worst: 0.144, compactness_worst: 0.1773, concavity_worst: 0.239,
+                concave_points_worst: 0.1288, symmetry_worst: 0.2977, fractal_dimension_worst: 0.07259
+            },
+            4: { // Benign case 2
+                radius_mean: 13.08, texture_mean: 15.71, perimeter_mean: 85.63, area_mean: 520.0,
+                smoothness_mean: 0.1075, compactness_mean: 0.127, concavity_mean: 0.04568,
+                concave_points_mean: 0.0311, symmetry_mean: 0.1967, fractal_dimension_mean: 0.06811,
+                radius_se: 0.1852, texture_se: 0.7477, perimeter_se: 1.383, area_se: 14.67,
+                smoothness_se: 0.004097, compactness_se: 0.01898, concavity_se: 0.01698,
+                concave_points_se: 0.00649, symmetry_se: 0.01678, fractal_dimension_se: 0.002425,
+                radius_worst: 14.5, texture_worst: 20.49, perimeter_worst: 96.09, area_worst: 630.5,
+                smoothness_worst: 0.1312, compactness_worst: 0.2776, concavity_worst: 0.189,
+                concave_points_worst: 0.07283, symmetry_worst: 0.3184, fractal_dimension_worst: 0.08183
+            }
+        };
+
+        function loadSample(caseNumber) {
+            const data = sampleData[caseNumber];
+            if (!data) return;
+
+            // Fill all form fields with sample data
+            Object.keys(data).forEach(key => {
+                const input = document.getElementById(key);
+                if (input) {
+                    // Convert the value to a number to ensure proper formatting
+                    const value = parseFloat(data[key]);
+                    input.value = value;
+                    
+                    // Trigger input event to ensure validation
+                    const event = new Event('input', { bubbles: true });
+                    input.dispatchEvent(event);
+                }
+            });
+
+            // Add visual feedback
+            const form = document.getElementById('detectionForm');
+            form.style.transform = 'scale(1.01)';
+            form.style.transition = 'transform 0.3s ease';
+            
+            setTimeout(() => {
+                form.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        function clearForm() {
+            document.getElementById('detectionForm').reset();
+            
+            // Add visual feedback
+            const form = document.getElementById('detectionForm');
+            form.style.transform = 'scale(0.99)';
+            form.style.transition = 'transform 0.3s ease';
+            
+            setTimeout(() => {
+                form.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Form validation
+        document.getElementById('detectionForm').addEventListener('submit', function(e) {
+            const inputs = this.querySelectorAll('input[type="number"]');
+            let isValid = true;
+            
+            inputs.forEach(input => {
+                // Check if the value is empty or not a valid number
+                if (!input.value || isNaN(input.value)) {
+                    isValid = false;
+                    input.style.borderColor = '#ff6b6b';
+                    input.style.backgroundColor = '#fff5f5';
+                } else {
+                    input.style.borderColor = '#ecf0f1';
+                    input.style.backgroundColor = 'white';
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill in all required fields with valid numbers before submitting.');
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = this.querySelector('.analysis-btn');
+            submitBtn.innerHTML = '🔄 Analyzing...';
+            submitBtn.disabled = true;
+        });
+
+        // Add smooth scroll to results if they exist
+        window.addEventListener('load', function() {
+            const resultsSection = document.querySelector('.results-section');
+            if (resultsSection) {
+                resultsSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }
+        });
+    </script>
+</body>
+</html>
