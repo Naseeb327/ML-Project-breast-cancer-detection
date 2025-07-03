@@ -44,12 +44,13 @@ class DataTransformation():
             test_df = pd.read_csv(test_path)
 
             preprocessing_obj = self.get_data_transformation_obj()
-            target_column = "diagnosis"
+            target_column = ["diagnosis"]
+            drop_coloumn = ["diagnosis","id"]
 
-            train_input_feature = train_df.drop(target_column,axis=1)
+            train_input_feature = train_df.drop(drop_coloumn,axis=1)
             train_target_feature = train_df[target_column]
 
-            test_input_feature = test_df.drop(target_column,axis=1)
+            test_input_feature = test_df.drop(drop_coloumn,axis=1)
             test_target_feature = test_df[target_column]
 
             train_input_feature_arr = preprocessing_obj.fit_transform(train_input_feature)
