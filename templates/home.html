@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breast Cancer Detection - Analysis</title>
+    <title>Breast Cancer Prediction - Analysis</title>
     <style>
         * {
             margin: 0;
@@ -375,8 +375,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎗️ Breast Cancer Detection Analysis</h1>
-            <p>Enter clinical data for ML-based breast cancer detection</p>
+            <h1>🎗️ Breast Cancer Prediction Analysis</h1>
+            <p>Enter clinical data for ML-based breast cancer Prediction</p>
         </div>
 
         <div class="main-content">
@@ -524,7 +524,7 @@
 
                     <div style="text-align: center; margin-top: 2rem;">
                         <button type="button" class="clear-btn" onclick="clearForm()">Clear All</button>
-                        <button type="submit" class="analysis-btn">🔍 Analyze for Cancer Detection</button>
+                        <button type="submit" class="analysis-btn">🔍 Analyze for Cancer Prediction</button>
                     </div>
                 </form>
 
@@ -532,7 +532,7 @@
                 {% if results is defined %}
                 <div class="results-section">
                     <div class="result-card {% if results > 0.5 %}malignant{% else %}benign{% endif %}">
-                        <h3>🎯 Detection Results</h3>
+                        <h3>🎯 Prediction Results</h3>
                         <div class="prediction-score">
                             <span class="score">{{ results }}</span>
                             <span class="label">Prediction Score</span>
